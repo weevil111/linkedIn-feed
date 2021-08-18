@@ -1,13 +1,35 @@
 import { CalendarViewDay, Create, EventNote, Image, Subscriptions } from '@material-ui/icons'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Feed.css'
+import { db } from './firebase'
 import InputOption from './InputOption'
 import Post from './Post'
+import firebase from 'firebase'
 
 function Feed() {
+  const [input, setInput] = useState('');
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    db.collection("posts")
+    .orderBy("timestamp","desc")
+    .onSnapshot(snapshot => {
+      setPosts( snapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      })))
+    });
+  },[])
   const sendPost = e => {
     e.preventDefault();
+    db.collection("posts").add({
+      name: 'Abhinav Mishra',
+      description: "This is a test",
+      message: input,
+      photoUrl: '',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+    setInput("");
   }
   return (
     <div className="feed">
@@ -15,7 +37,7 @@ function Feed() {
         <div className="feed__input">
           <Create />
           <form>
-            <input type="text" placeholder="Start a post"/>
+            <input type="text" placeholder="Start a post" value={input} onChange={e => setInput(e.target.value)}/>
             <button onClick={sendPost} type="submit">Send</button>
           </form>
         </div>
@@ -26,11 +48,15 @@ function Feed() {
           <InputOption Icon={CalendarViewDay} title="Write article" color="#7FC15E"/>
         </div>
       </div>
-      {posts.map( (post)=> (
-        <Post />
+      {posts.map( ({id, data: {name, description, message, photoUrl}})=> (
+        <Post 
+          key={id}
+          name={name}
+          description={description}
+          message={message}
+          photoUrl={photoUrl}
+        />
       ))}
-      <Post name="Abhinav Mishra" description="This is a test" 
-        message="WOW this worked"/>
     </div>
   )
 }
