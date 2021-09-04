@@ -1,4 +1,5 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+# Linked-in feed clone
+This web app replicates the LinkedIn feed section. The app has realtime feed update imlemented using firebase realtime database. 
 
 ## Demo
 https://linkedin-clone-22825.web.app/
